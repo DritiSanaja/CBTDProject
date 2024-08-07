@@ -8,13 +8,13 @@ namespace CBTDWeb.Pages.Manufacturers
     public class DeleteModel : PageModel
     {
 
-        private readonly ApplicationDbContext _db;
+        private readonly UnitOfWork _UnitOfWork;
         [BindProperty]  //synchronizes form fields with values in code behind
         public Manufacturer objManufacturer { get; set; }
 
-        public DeleteModel(ApplicationDbContext db)  //dependency injection
+        public DeleteModel(UnitOfWork unitOfWork)  //dependency injection
         {
-            _db = db;
+            _UnitOfWork = unitOfWork;
             objManufacturer = new Manufacturer();
         }
 
@@ -26,7 +26,7 @@ namespace CBTDWeb.Pages.Manufacturers
             //am I in edit mode?
             if (id != 0)
             {
-                objManufacturer = _db.Manufacturers.Find(id);
+                objManufacturer = _UnitOfWork.Manufacturer.GetById(id);
             }
 
             if (objManufacturer == null)  //nothing found in DB
@@ -43,9 +43,9 @@ namespace CBTDWeb.Pages.Manufacturers
             {
                 return Page();
             }
-            _db.Manufacturers.Remove(objManufacturer);  //Removes from memory
+            _UnitOfWork.Manufacturer.Delete(objManufacturer);  //Removes from memory
             TempData["success"] = "Manufacturer Deleted Successfully";
-            _db.SaveChanges();   //saves to DB
+            _UnitOfWork.Commit();   //saves to DB
 
             return RedirectToPage("./Index");
         }
