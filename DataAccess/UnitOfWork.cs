@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -13,7 +14,11 @@ public class UnitOfWork : IUnitOfWork
 
     private IGenericRepository<Category> _Category;
     private IGenericRepository<Manufacturer> _Manufacturer;
-
+    private IGenericRepository<Product> _Product;
+    private IGenericRepository<ApplicationUser> _ApplicationUser;
+    private IGenericRepository<ShoppingCart> _ShoppingCart;
+    private IOrderHeaderRepository<OrderHeader> _OrderHeader;
+    private IGenericRepository<OrderDetails> _OrderDetails;
     public IGenericRepository<Category> Category
     {
         get
@@ -25,6 +30,34 @@ public class UnitOfWork : IUnitOfWork
             }
 
             return _Category;
+        }
+    }
+
+    public IOrderHeaderRepository<OrderHeader> OrderHeader
+    {
+        get
+        {
+
+            if (_OrderHeader == null)
+            {
+                _OrderHeader = new OrderHeaderRepository(_dbContext);
+            }
+
+            return _OrderHeader;
+        }
+    }
+
+    public IGenericRepository<OrderDetails> OrderDetails
+    {
+        get
+        {
+
+            if (_OrderDetails == null)
+            {
+                _OrderDetails = new GenericRepository<OrderDetails>(_dbContext);
+            }
+
+            return _OrderDetails;
         }
     }
 
@@ -42,7 +75,48 @@ public class UnitOfWork : IUnitOfWork
         }
     }
 
+    public IGenericRepository<Product> Product
+    {
+        get
+        {
+
+            if (_Product == null)
+            {
+                _Product = new GenericRepository<Product>(_dbContext);
+            }
+
+            return _Product;
+        }
+    }
+
+    public IGenericRepository<ApplicationUser> ApplicationUser
+    {
+        get
+        {
+
+            if (_ApplicationUser == null)
+            {
+                _ApplicationUser = new GenericRepository<ApplicationUser>(_dbContext);
+            }
+
+            return _ApplicationUser;
+        }
+    }
     //ADD ADDITIONAL METHODS FOR EACH MODEL HERE
+    public IGenericRepository<ShoppingCart> ShoppingCart
+    {
+        get
+        {
+
+            if (_ShoppingCart == null)
+            {
+                _ShoppingCart = new GenericRepository<ShoppingCart>(_dbContext);
+            }
+
+            return _ShoppingCart;
+        }
+    }
+
 
     public int Commit()
     {

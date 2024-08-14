@@ -1,0 +1,211 @@
+﻿@page
+@model CBTDWeb.Pages.Products.UpsertModel
+@{
+}
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-black pt-4 pb-3 text-center">
+        <h2 class="text-white py-2">@(Model.objProduct.Id != 0 ? "Update" : "Create") Product</h2>
+    </div>
+    <div class="card-body p-4">
+        <!--change validateInput to ValidateInpuT, same as in the script-->
+        <form method="post" onsubmit="return ValidateInput()" enctype="multipart/form-data" class="border p-3">
+            <div class="row">
+                <div class="mb-3">
+                    <label asp-for="@Model.objProduct.Name" class="ms-2"></label>
+                    <input id="txtName" asp-for="@Model.objProduct.Name" class="form-control" />
+                    <span asp-validation-for="@Model.objProduct.Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="objProduct.Description" class="ms-2"></label>
+                    <textarea id="txtDesc" asp-for="objProduct.Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="objProduct.Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label asp-for="objProduct.UPC" class="ms-2"></label>
+                        <input id="txtUPC" asp-for="objProduct.UPC" class="form-control" />
+                        <span asp-validation-for="objProduct.UPC" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="objProduct.Size" class="ms-2"></label>
+                        <input id="txtSize" asp-for="objProduct.Size" class="form-control" />
+                        <span asp-validation-for="objProduct.Size" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="ms-2">Category</label>
+                        <!-- model is the variable that is used to save/ be saved to the populated list inside the Model.Category List-->
+                        @Html.DropDownListFor(model =>
+                                 model.objProduct.CategoryId,
+                                 Model.CategoryList,
+                                 "Please select Category",
+                                 new { @class = "form-select ddlCategory" })
+
+                        <span asp-validation-for="objProduct.CategoryId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="ms-2">Manufacturer</label>
+                        @Html.DropDownListFor(model =>
+                                 model.objProduct.ManufacturerId,
+                                 Model.ManufacturerList,
+                                 "Please select Manufacturer",
+                                 new { @class = "form-select ddlManufacturer" })
+                        <span asp-validation-for="objProduct.ManufacturerId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label asp-for="objProduct.ListPrice" class="ms-2"></label>
+                        <input asp-for="objProduct.ListPrice" type="number" step="0.01" class="form-control" />
+                        <span asp-validation-for="objProduct.ListPrice" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="objProduct.UnitPrice" class="ms-2"></label>
+                        <input asp-for="objProduct.UnitPrice" type="number" step="0.01" class="form-control" />
+                        <span asp-validation-for="objProduct.UnitPrice" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="objProduct.HalfDozenPrice" class="ms-2"></label>
+                        <input asp-for="objProduct.HalfDozenPrice" type="number" step="0.01" class="form-control" />
+                        <span asp-validation-for="objProduct.HalfDozenPrice" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="objProduct.DozenPrice" class="ms-2"></label>
+                        <input asp-for="objProduct.DozenPrice" type="number" step="0.01" class="form-control" />
+                        <span asp-validation-for="objProduct.DozenPrice" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="mb-3">
+                    <label for="" class="form-label">@(Model.objProduct.ImageUrl != null ? "Replace " : "")Picture</label>
+                    <input id="uploadBox" asp-for="objProduct.ImageUrl" class="form-control" type="file">
+                    <span asp-validation-for="objProduct.ImageUrl" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+
+
+
+
+
+
+
+
+                    @if (Model.objProduct.ImageUrl != null)
+
+
+                    {
+
+
+                        <input class="visually-hidden" type="hidden" asp-for="@Model.objProduct.ImageUrl" />
+
+
+                        <div class="col-4">
+
+
+                            <div class="mt-1 form-text">Current picture</div>
+                            <!--
+                                be careful with the src tag
+                            -->
+                            <img class="img-thumbnail" src="@Model.objProduct.ImageUrl" />
+
+
+                        </div>
+
+
+                    }
+
+
+
+
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-6 col-md-3">
+
+
+                    @if (Model.objProduct.Id != 0)
+                    {
+                        <input asp-for="@Model.objProduct.Id" type=hidden />
+                    }
+
+
+                    <button type="submit" class="btn btn-primary form-control">@(Model.objProduct.Id == 0 ? "Create" : "Update")</button>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-page="Index" class="btn btn-outline-primary border form-control">
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: "lists",
+            menubar: "file edit format"
+        });
+        function ValidateInput() {
+            if (document.getElementById('txtName').value == "") {
+                Swal.fire('Error', 'Please Enter a Product Name', 'error');
+                return false;
+            }
+
+            if (document.getElementById('txtUPC').value == "") {
+                Swal.fire('Error', 'Please Enter a Product UPC', 'error');
+                return false;
+            }
+            if (document.getElementById('txtSize').value == "") {
+                Swal.fire('Error', 'Please Enter Product Size Information', 'error');
+                return false;
+            }
+
+            if ($('#txtUnitPrice').val() < .01) {
+                Swal.fire('Error', 'Please Enter a Unit Price Greater Than $.01', 'error');
+                return false;
+            }
+
+            if ($('#txtListPrice').val() < .01) {
+                Swal.fire('Error', 'Please Enter a List Price Greater Than $.01', 'error');
+                return false;
+            }
+
+            if ($('#txtHalfDozenPrice').val() < .01) {
+                Swal.fire('Error', 'Please Enter a Half Dozen+ Price Greater Than $.01', 'error');
+                return false;
+            }
+
+            if ($('#txtDozenPrice').val() < .01) {
+                Swal.fire('Error', 'Please Enter a Dozen+ Price Greater Than $.01', 'error');
+                return false;
+            }
+
+            if (tinyMCE.get('txtDesc').getContent() == "") {
+                Swal.fire('Error', 'Please Enter a Product Description', 'error');
+                return false;
+            }
+
+            if (document.getElementById("uploadBox").value == "") {
+                Swal.fire('Error', 'Please Select an Image', 'error')
+                return false
+            }
+
+            //if ($('#ddlCategory').prop('selectedIndex') === 0) {
+            if ($('.ddlCategory').prop('selectedIndex') === 0) {
+                Swal.fire('Error', 'Please Select a Category', 'error');
+                return false;
+            }
+
+            //if ($('#ddlManufacturer').prop('selectedIndex') === 0) {
+            if ($('.ddlManufacturer').prop('selectedIndex') === 0) {
+                Swal.fire('Error', 'Please Select a Manufacturer', 'error');
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
